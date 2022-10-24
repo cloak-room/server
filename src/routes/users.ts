@@ -26,7 +26,7 @@ router.post(
   "/add",
   async function (req: express.Request, res: express.Response): Promise<void> {
     if (await checkUsernameExists(req.body.username)) {
-      res.json({
+      res.status(400).json({
         error: true,
         message: "A user with that name already exists",
       });
@@ -42,9 +42,9 @@ router.post(
 
     try {
       await AppDataSource.getRepository(User).save(user);
-      res.json({ message: "User added successfully" });
+      res.status(201).json({ message: "User added successfully" });
     } catch (e) {
-      res.json({ error: e, message: "Failed to add user" });
+      res.status(500).json({ error: e, message: "Failed to add user" });
     }
   }
 );
