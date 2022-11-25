@@ -41,7 +41,7 @@ router.post(
   async function (req: express.Request, res: express.Response): Promise<void> {
     try {
       const item = await AppDataSource.getRepository(Item).save({
-        id: req.body.itemID,
+        id: req.body.id,
         collected: true,
       });
       res.status(201).json({ message: "Item collected successfully" });
@@ -58,6 +58,7 @@ router.post(
     console.log(req.body);
 
     const {
+      id,
       userID,
       ownerName,
       ownerPhoneNumber,
@@ -73,7 +74,7 @@ router.post(
       id: itemTypeID,
     });
 
-    if (!user) {
+    if (!user && !id) {
       res.status(400).json({
         error: true,
         message: `User with id ${userID} does not exist`,
@@ -81,7 +82,7 @@ router.post(
       return;
     }
 
-    if (!storageLocation) {
+    if (!storageLocation && !id) {
       res.status(400).json({
         error: true,
         message: `Please specify a storage location`,
@@ -89,7 +90,7 @@ router.post(
       return;
     }
 
-    if (!itemType) {
+    if (!itemType && !id) {
       res.status(400).json({
         error: true,
         message: `Item Type ${itemTypeID} does not exist`,
@@ -97,7 +98,7 @@ router.post(
       return;
     }
 
-    if (ownerName == null) {
+    if (ownerName == null && !id) {
       res.status(400).json({
         error: true,
         message: `An owner name must be supplied`,
@@ -107,6 +108,7 @@ router.post(
     }
 
     Object.assign(item, {
+      id,
       user,
       ownerName,
       ownerPhoneNumber,
@@ -117,7 +119,9 @@ router.post(
 
     try {
       await AppDataSource.getRepository(Item).save(item);
-      res.status(201).json({ message: "Item added successfully" });
+      res.status(201).json({
+        message: id ? "Item updated successfully" : "Item added successfully",
+      });
     } catch (e) {
       res.status(500).json({ error: e, message: "Failed to add item" });
     }
