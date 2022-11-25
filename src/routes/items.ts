@@ -17,6 +17,7 @@ router.get(
         "item.ownerName",
         "item.ownerPhoneNumber",
         "item.comments",
+        "item.storageLocation",
       ]);
 
       if (from) {
@@ -31,6 +32,21 @@ router.get(
       res.json(await items);
     } catch (e) {
       res.status(500).json({ error: e, message: "Failed to get items" });
+    }
+  }
+);
+
+router.post(
+  "/collect",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    try {
+      const item = await AppDataSource.getRepository(Item).save({
+        id: req.body.itemID,
+        collected: true,
+      });
+      res.status(201).json({ message: "Item collected successfully" });
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to collect item" });
     }
   }
 );

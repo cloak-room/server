@@ -34,6 +34,9 @@ export class Item {
   @Column({ type: "varchar", nullable: true })
   comments?: string;
 
+  @Column({ type: "boolean", nullable: false, default: false })
+  collected?: boolean = false;
+
   @CreateDateColumn()
   createdAt?: Date;
 }
