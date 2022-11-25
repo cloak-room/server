@@ -17,6 +17,7 @@ specifiers:
   reflect-metadata: ^0.1.13
   ts-node: ^10.9.1
   typeorm: ^0.3.10
+  typeorm-text-search: ^1.1.2
   typescript: ^4.8.4
 
 dependencies:
@@ -36,6 +37,7 @@ dependencies:
   reflect-metadata: 0.1.13
   ts-node: 10.9.1_6hf6ijjdmrvgn4gwd23tocsh2m
   typeorm: 0.3.10_pg@8.8.0+ts-node@10.9.1
+  typeorm-text-search: 1.1.2_typeorm@0.3.10
   typescript: 4.8.4
 
 packages:
@@ -1158,6 +1160,14 @@ packages:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
+    dev: false
+
+  /typeorm-text-search/1.1.2_typeorm@0.3.10:
+    resolution: {integrity: sha512-r/xc2gRxWmOaErVK0DEVuzaI7JtB9WxmsTIfq3tekKUT+rIIiv2A1WHSA8hp+dY6G9XEkh++nrhNvcC9jezOaA==}
+    peerDependencies:
+      typeorm: ^0.2.25
+    dependencies:
+      typeorm: 0.3.10_pg@8.8.0+ts-node@10.9.1
     dev: false
 
   /typeorm/0.3.10_pg@8.8.0+ts-node@10.9.1:

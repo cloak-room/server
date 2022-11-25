@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Item } from "./item.entity";
 
 @Entity()
 export class User {
@@ -16,4 +17,7 @@ export class User {
 
   @Column({ type: "varchar", nullable: true })
   hash?: string;
+
+  @OneToMany(() => Item, (item) => item.user)
+  items: Item[] | undefined;
 }

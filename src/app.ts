@@ -6,6 +6,8 @@ import logger from "morgan";
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
+import itemsRouter from "./routes/items";
+
 import { AppDataSource } from "../appDataSource";
 
 const port = 3000;
@@ -27,7 +29,7 @@ AppDataSource.initialize()
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-
+app.use("/items", itemsRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
