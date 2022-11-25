@@ -4,6 +4,9 @@ import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
+const swaggerUI = require("swagger-ui-express");
+const swaggerDocument = require("./swagger_output.json");
+
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
 import itemsRouter from "./routes/items";
@@ -19,6 +22,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use("/docs", swaggerUI.serve);
+app.get("/docs", swaggerUI.setup(swaggerDocument));
 
 AppDataSource.initialize()
   .then(() => {
