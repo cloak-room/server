@@ -1,0 +1,178 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Cloakroom API",
+    "description": ""
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/users/": {
+      "get": {
+        "description": "Get a list of staff with access to the system",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/users/add": {
+      "post": {
+        "description": "Add a new staff user",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "any"
+                },
+                "firstName": {
+                  "example": "any"
+                },
+                "lastName": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/items/": {
+      "get": {
+        "description": "Get a list of all items. To and From dates are in the local timezone. q will search 'ownerName', 'ownerPhoneNumber', 'comments', and 'storageLocation'",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "type": "date"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "type": "date"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/items/collect": {
+      "post": {
+        "description": "The endpoint changes the item given by id to collected",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/items/add": {
+      "post": {
+        "description": "Add a new item to the system",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "0"
+                },
+                "userID": {
+                  "example": "1"
+                },
+                "ownerName": {
+                  "example": "Greg"
+                },
+                "ownerPhoneNumber": {
+                  "example": "0455555555"
+                },
+                "comments": {
+                  "example": "Greg's wife Nancy might collect the item"
+                },
+                "itemTypeID": {
+                  "example": 1
+                },
+                "storageLocation": {
+                  "example": "B6"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/item_types/": {
+      "get": {
+        "description": "Get a list of accepted item types and their prices",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

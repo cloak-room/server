@@ -4,8 +4,14 @@ import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
+const swaggerUI = require("swagger-ui-express");
+const swaggerDocument = require("./swagger_output.json");
+
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
+import itemsRouter from "./routes/items";
+import itemTypesRouter from "./routes/itemTypes";
+
 import { AppDataSource } from "../appDataSource";
 
 const port = 3000;
@@ -17,6 +23,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/docs", swaggerUI.serve);
+app.get("/docs", swaggerUI.setup(swaggerDocument));
+
 AppDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
@@ -27,6 +36,8 @@ AppDataSource.initialize()
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/items", itemsRouter);
+app.use("/item_types", itemTypesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
