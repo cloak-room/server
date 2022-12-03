@@ -3,6 +3,7 @@ import path from "path";
 import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+const cors = require("cors");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("./swagger_output.json");
@@ -17,6 +18,7 @@ import { AppDataSource } from "../appDataSource";
 const port = 3000;
 const app: express.Application = express();
 
+app.use(cors);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
