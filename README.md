@@ -143,9 +143,14 @@ You will need the following prerequisites to run the project successfully
    cd server
    pnpm install
    ```
-3. Configure your database connection TODO
-   ```js
-   const API_KEY = "ENTER YOUR API";
+3. Create a new postrges database
+4. Configure your database connection in .env
+   ```shell
+   # Database
+   DB_USER=your_username
+   DB_PASSWORD=
+   DATABASE=your_database
+   DB_PORT=5432
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
