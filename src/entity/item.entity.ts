@@ -15,18 +15,24 @@ export class Item {
   @PrimaryGeneratedColumn()
   readonly id!: number;
 
-  @ManyToOne(() => User, (user) => user.items)
+  @ManyToOne(() => User, (user) => user.items, {
+    eager: true,
+  })
   @JoinColumn()
   user!: User;
 
   @Column({ type: "varchar" })
   ownerName!: string;
 
-  @ManyToOne(() => ItemType, (itemType) => itemType.items)
+  @ManyToOne(() => ItemType, (itemType) => itemType.items, {
+    eager: true,
+  })
   @JoinColumn()
   itemType!: ItemType;
 
-  @ManyToOne(() => PaymentMethod, (paymentMethod) => paymentMethod.items)
+  @ManyToOne(() => PaymentMethod, (paymentMethod) => paymentMethod.items, {
+    eager: true,
+  })
   @JoinColumn()
   paymentMethod!: PaymentMethod;
 

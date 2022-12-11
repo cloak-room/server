@@ -27,7 +27,11 @@ router.get(
         queryBuilder.where("item.createdAt < :to", { to: to });
       }
 
-      const items = queryBuilder.getMany();
+      const items = queryBuilder
+        .leftJoinAndSelect("item.itemType", "itemType")
+        .leftJoinAndSelect("item.paymentMethod", "paymentMethod")
+        .leftJoinAndSelect("item.user", "user")
+        .getMany();
 
       res.json(await items);
     } catch (e) {
