@@ -65,6 +65,7 @@ router.post(
       comments,
       itemTypeID,
       storageLocation,
+      paymentMethod,
     } = req.body;
 
     const user = await AppDataSource.getRepository(User).findOneBy({
@@ -86,6 +87,14 @@ router.post(
       res.status(400).json({
         error: true,
         message: `Please specify a storage location`,
+      });
+      return;
+    }
+
+    if (!paymentMethod && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Please specify a payment method`,
       });
       return;
     }
@@ -115,6 +124,7 @@ router.post(
       comments,
       itemType,
       storageLocation,
+      paymentMethod,
     });
 
     try {

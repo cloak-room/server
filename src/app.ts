@@ -12,6 +12,7 @@ import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
 import itemsRouter from "./routes/items";
 import itemTypesRouter from "./routes/itemTypes";
+import paymentMethodsRouter from "./routes/paymentMethods";
 
 import { AppDataSource } from "../appDataSource";
 
@@ -40,6 +41,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/items", itemsRouter);
 app.use("/item_types", itemTypesRouter);
+app.use("/payment_methods", paymentMethodsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

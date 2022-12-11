@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { ItemType } from "./itemType.entity";
 import { User } from "./user.entity";
+import { PaymentMethod } from "./paymentMethod.entitiy";
 
 @Entity()
 export class Item {
@@ -24,6 +25,10 @@ export class Item {
   @ManyToOne(() => ItemType, (itemType) => itemType.items)
   @JoinColumn()
   itemType!: ItemType;
+
+  @ManyToOne(() => PaymentMethod, (paymentMethod) => paymentMethod.items)
+  @JoinColumn()
+  paymentMethod!: PaymentMethod;
 
   @Column({ type: "varchar", nullable: false })
   storageLocation!: string;
