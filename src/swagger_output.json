@@ -90,7 +90,7 @@
     },
     "/items/refund": {
       "post": {
-        "description": "The endpoint changes the item given by id to refunded",
+        "description": "The endpoint changes the item given by id to refunded. The optional parameter `reset` may be used to undo the refund",
         "parameters": [
           {
             "name": "body",
@@ -99,7 +99,10 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "example": "any"
+                  "example": 1
+                },
+                "reset": {
+                  "example": false
                 }
               }
             }
@@ -117,7 +120,7 @@
     },
     "/items/collect": {
       "post": {
-        "description": "The endpoint changes the item given by id to collected",
+        "description": "The endpoint changes the item given by id to collected. The optional parameter `reset` may be used to undo the collection",
         "parameters": [
           {
             "name": "body",
@@ -127,6 +130,9 @@
               "properties": {
                 "id": {
                   "example": "any"
+                },
+                "reset": {
+                  "example": false
                 }
               }
             }
