@@ -5,7 +5,7 @@
     "title": "Cloakroom API",
     "description": ""
   },
-  "host": "localhost:3008",
+  "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
