@@ -144,13 +144,18 @@ You will need the following prerequisites to run the project successfully
    pnpm install
    ```
 3. Create a new postrges database
-4. Configure your database connection in .env
+4. Configure your database connection and url in .env
+
    ```shell
    # Database
    DB_USER=your_username
    DB_PASSWORD=
    DATABASE=your_database
    DB_PORT=5432
+
+   # API URL
+   PORT=3001
+   DOMAIN=localhost
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
