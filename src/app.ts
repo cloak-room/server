@@ -4,6 +4,8 @@ import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 const cors = require("cors");
+import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("./swagger_output.json");
@@ -16,7 +18,7 @@ import paymentMethodsRouter from "./routes/paymentMethods";
 
 import { AppDataSource } from "../appDataSource";
 
-const port = 3000;
+const port = process.env.PORT ?? 3000;
 const app: express.Application = express();
 
 app.use(cors());

@@ -50,4 +50,7 @@ export class Item {
 
   @CreateDateColumn()
   createdAt?: Date;
+
+  @Column({ type: "timestamptz", nullable: true, default: null })
+  refunded?: Date | null = null;
 }

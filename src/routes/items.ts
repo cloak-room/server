@@ -4,6 +4,8 @@ import { Item } from "../entity/item.entity";
 import { ItemType } from "../entity/itemType.entity";
 import { User } from "../entity/user.entity";
 import { textSearchByFields } from "typeorm-text-search";
+const cors = require("cors");
+
 const router = express.Router();
 
 router.get(
@@ -51,6 +53,21 @@ router.post(
       res.status(201).json({ message: "Item collected successfully" });
     } catch (e) {
       res.status(500).json({ error: e, message: "Failed to collect item" });
+    }
+  }
+);
+
+router.post(
+  "/refund",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    try {
+      const item = await AppDataSource.getRepository(Item).save({
+        id: req.body.id,
+        refunded: new Date().toISOString(),
+      });
+      res.status(201).json({ message: "Item refunded successfully" });
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to refund item" });
     }
   }
 );

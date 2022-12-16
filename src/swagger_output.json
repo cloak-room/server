@@ -5,7 +5,7 @@
     "title": "Cloakroom API",
     "description": ""
   },
-  "host": "localhost:3000",
+  "host": "localhost:3008",
   "basePath": "/",
   "schemes": [
     "http"
@@ -81,6 +81,33 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/items/refund": {
+      "post": {
+        "description": "The endpoint changes the item given by id to refunded",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Refunded Successfully"
           },
           "500": {
             "description": "Internal Server Error"
