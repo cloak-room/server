@@ -48,7 +48,7 @@ router.post(
     try {
       const item = await AppDataSource.getRepository(Item).save({
         id: req.body.id,
-        collected: req.body.reset ? false : true,
+        collected: req.body.reset ? null : new Date().toISOString(),
       });
       res.status(201).json({
         message: req.body.reset

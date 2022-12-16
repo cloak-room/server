@@ -45,8 +45,8 @@ export class Item {
   @Column({ type: "varchar", nullable: true })
   comments?: string;
 
-  @Column({ type: "boolean", nullable: false, default: false })
-  collected?: boolean = false;
+  @Column({ type: "timestamptz", nullable: true, default: null })
+  collected?: Date | null = null;
 
   @CreateDateColumn()
   createdAt?: Date;
