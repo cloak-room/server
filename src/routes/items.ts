@@ -48,9 +48,13 @@ router.post(
     try {
       const item = await AppDataSource.getRepository(Item).save({
         id: req.body.id,
-        collected: true,
+        collected: req.body.reset ? false : true,
       });
-      res.status(201).json({ message: "Item collected successfully" });
+      res.status(201).json({
+        message: req.body.reset
+          ? "Collection reset successfully"
+          : "Item collected successfully",
+      });
     } catch (e) {
       res.status(500).json({ error: e, message: "Failed to collect item" });
     }
@@ -63,9 +67,13 @@ router.post(
     try {
       const item = await AppDataSource.getRepository(Item).save({
         id: req.body.id,
-        refunded: new Date().toISOString(),
+        refunded: req.body.reset ? null : new Date().toISOString(),
       });
-      res.status(201).json({ message: "Item refunded successfully" });
+      res.status(201).json({
+        message: req.body.reset
+          ? "Refund reset successfully"
+          : "Item refunded successfully",
+      });
     } catch (e) {
       res.status(500).json({ error: e, message: "Failed to refund item" });
     }

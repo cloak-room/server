@@ -19,6 +19,8 @@ import paymentMethodsRouter from "./routes/paymentMethods";
 import { AppDataSource } from "../appDataSource";
 
 const port = process.env.PORT ?? 3000;
+
+swaggerDocument.host = `localhost:${port}`;
 const app: express.Application = express();
 
 app.use(cors());
