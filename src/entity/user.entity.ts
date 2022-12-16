@@ -20,4 +20,7 @@ export class User {
 
   @OneToMany(() => Item, (item) => item.user)
   items: Item[] | undefined;
+
+  @Column({ type: "int", nullable: false, default: 0 })
+  level?: number;
 }

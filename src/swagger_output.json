@@ -24,6 +24,42 @@
     },
     "/users/add": {
       "post": {
+        "description": "Add a new staff user. This endpoint will only function if LAZY_AUTH is set in env",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "any"
+                },
+                "firstName": {
+                  "example": "any"
+                },
+                "lastName": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
         "description": "Add a new staff user",
         "parameters": [
           {
@@ -40,6 +76,42 @@
                 },
                 "lastName": {
                   "example": "any"
+                },
+                "password": {
+                  "example": "Needed only if lazy auth is enabled"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "description": "Login to a staff user account. Password is only required it LAZY_AUTH is enabled in .env",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "only required if lazy auth is enabled"
                 }
               }
             }
