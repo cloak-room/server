@@ -23,10 +23,10 @@ router.get(
       ]);
 
       if (from) {
-        queryBuilder.where("item.createdAt > :from", { from: from });
+        queryBuilder.andWhere("item.createdAt > :from", { from: from });
       }
       if (to) {
-        queryBuilder.where("item.createdAt < :to", { to: to });
+        queryBuilder.andWhere("item.createdAt < :to", { to: to });
       }
 
       const items = queryBuilder

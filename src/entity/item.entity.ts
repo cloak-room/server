@@ -48,7 +48,11 @@ export class Item {
   @Column({ type: "timestamptz", nullable: true, default: null })
   collected?: Date | null = null;
 
-  @CreateDateColumn()
+  @Column({
+    type: "timestamptz",
+    nullable: false,
+    default: new Date().toISOString(),
+  })
   createdAt?: Date;
 
   @Column({ type: "timestamptz", nullable: true, default: null })
