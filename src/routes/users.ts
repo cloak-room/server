@@ -24,7 +24,9 @@ async function checkUsernameExists(username: string): Promise<boolean> {
 router.get(
   "/",
   async function (req: express.Request, res: express.Response): Promise<void> {
-    const users = await AppDataSource.getRepository(User).find();
+    const users = await AppDataSource.getRepository(User).find({
+      select: ["id", "username"],
+    });
     res.json(users);
   }
 );
