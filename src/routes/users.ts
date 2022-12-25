@@ -25,7 +25,7 @@ router.get(
   "/",
   async function (req: express.Request, res: express.Response): Promise<void> {
     const users = await AppDataSource.getRepository(User).find({
-      select: ["id", "username"],
+      select: ["id", "username", "level"],
     });
     res.json(users);
   }
