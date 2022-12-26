@@ -33,6 +33,7 @@ router.get(
         .leftJoinAndSelect("item.itemType", "itemType")
         .leftJoinAndSelect("item.paymentMethod", "paymentMethod")
         .leftJoinAndSelect("item.user", "user")
+        .leftJoinAndSelect("item.refundedBy", "refundedBy")
         .getMany();
 
       res.json(await items);
@@ -67,6 +68,7 @@ router.post(
     try {
       const item = await AppDataSource.getRepository(Item).save({
         id: req.body.id,
+        refundedBy: req.body.user,
         refunded: req.body.reset ? null : new Date().toISOString(),
       });
       res.status(201).json({

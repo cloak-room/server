@@ -21,6 +21,12 @@ export class Item {
   @JoinColumn()
   user!: User;
 
+  @ManyToOne(() => User, (user) => user.items, {
+    eager: true,
+  })
+  @JoinColumn()
+  refundedBy!: User | null;
+
   @Column({ type: "varchar" })
   ownerName!: string;
 
