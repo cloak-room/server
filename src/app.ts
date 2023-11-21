@@ -25,7 +25,7 @@ swaggerDocument.host = `${domain}:${port}`;
 const app: express.Application = express();
 
 console.log(
-  "CloakRoom Server is licensed under the AGPL 3. Copyright (C) 2023 - Benjamin Rowe & Kiara Davison"
+  "CloakRoom Server is licensed under the AGPL 3. Copyright (C) 2023 - Benjamin Rowe, Kiara Davison & Contributors"
 );
 
 app.use(cors());

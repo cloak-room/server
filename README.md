@@ -218,7 +218,7 @@ Distributed under the AGPLv3 License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Benjamin Rowe - [@BenjaminARowe](https://twitter.com/BenjaminARowe) - benjamin.alan.rowe@gmail.com
+Benjamin Rowe - [benjaminARowe](https://github.com/benjaminARowe)
 
 Project Link: [https://github.com/cloak-room/server](https://github.com/cloak-room/server)
 
@@ -230,12 +230,14 @@ Project Link: [https://github.com/cloak-room/server](https://github.com/cloak-ro
 
 - [Kiara Davison](https://github.com/kkdav)
 
+Thankyou to all those who provided feedback without contributing code
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-CloakRoom Server is licensed under the AGPL 3. Copyright (C) 2023 - Benjamin Rowe & Kiara Davison
+CloakRoom Server is licensed under the AGPL 3. Copyright (C) 2023 - Benjamin Rowe, Kiara Davison & Contributors
 
 [contributors-shield]: https://img.shields.io/github/contributors/cloak-room/server.svg?style=for-the-badge
 [contributors-url]: https://github.com/cloak-room/server/graphs/contributors
