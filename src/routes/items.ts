@@ -1,0 +1,208 @@
+import express, { Application } from "express";
+import { AppDataSource } from "../../appDataSource";
+import { Item } from "../entity/item.entity";
+import { ItemType } from "../entity/itemType.entity";
+import { User } from "../entity/user.entity";
+import { textSearchByFields } from "typeorm-text-search";
+const cors = require("cors");
+
+const router = express.Router();
+
+router.get(
+  "/",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    const { from, to, q, p, showCollected, perPage, id } = req.query;
+    const pageSize = parseInt(process.env.PAGE_SIZE ?? "100");
+    const page = parseInt((p ?? "1") as string);
+    const parsePerPage = parseInt((perPage ?? `${pageSize}`) as string);
+    console.log(perPage);
+    const parseShowCollected = parseInt((showCollected ?? "0") as string);
+
+    try {
+      const queryBuilder = () => {
+        const queryBuilder = AppDataSource.createQueryBuilder(Item, "item");
+        textSearchByFields<Item>(queryBuilder, (q ?? "%") as string, [
+          "item.ownerName",
+          "item.ownerPhoneNumber",
+          "item.comments",
+          "item.storageLocation",
+        ]);
+
+        if (from) {
+          queryBuilder.andWhere("item.createdAt > :from", { from: from });
+        }
+        if (to) {
+          queryBuilder.andWhere("item.createdAt < :to", { to: to });
+        }
+
+        if (parseShowCollected == 0) {
+          queryBuilder.andWhere("item.collected IS NULL");
+        }
+
+        if (id != null) {
+          queryBuilder.andWhere("item.id = :id", { id: id });
+        }
+
+        const items = queryBuilder
+          .leftJoinAndSelect("item.itemType", "itemType")
+          .leftJoinAndSelect("item.paymentMethod", "paymentMethod")
+          .leftJoinAndSelect("item.user", "user")
+          .leftJoinAndSelect("item.refundedBy", "refundedBy");
+        return items;
+      };
+
+      const limitItems = await queryBuilder()
+        .limit(parsePerPage)
+        .offset((page - 1) * parsePerPage)
+        .getManyAndCount();
+
+      // const stats = queryBuilder()
+      //   .select("COUNT(item.id)", "count")
+      //   .getRawOne();
+
+      const result = {
+        pageSize: parsePerPage,
+        pageNumber: page,
+        pageCount: Math.ceil(limitItems[1] / parsePerPage),
+        count: limitItems[1],
+        // stats: await stats,
+        data: limitItems[0],
+      };
+      res.json(result);
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to get items" });
+    }
+  }
+);
+
+router.post(
+  "/collect",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    try {
+      const item = await AppDataSource.getRepository(Item).save({
+        id: req.body.id,
+        collected: req.body.reset ? null : new Date().toISOString(),
+      });
+      res.status(201).json({
+        message: req.body.reset
+          ? "Collection reset successfully"
+          : "Item collected successfully",
+      });
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to collect item" });
+    }
+  }
+);
+
+router.post(
+  "/refund",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    try {
+      const item = await AppDataSource.getRepository(Item).save({
+        id: req.body.id,
+        refundedBy: req.body.user,
+        refunded: req.body.reset ? null : new Date().toISOString(),
+      });
+      res.status(201).json({
+        message: req.body.reset
+          ? "Refund reset successfully"
+          : "Item refunded successfully",
+      });
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to refund item" });
+    }
+  }
+);
+
+router.post(
+  "/add",
+  async function (req: express.Request, res: express.Response): Promise<void> {
+    const item = new Item();
+    console.log(req.body);
+
+    const {
+      id,
+      userId,
+      ownerName,
+      ownerPhoneNumber,
+      comments,
+      itemType: itemTypeID,
+      storageLocation,
+      paymentMethod,
+    } = req.body;
+
+    const user = await AppDataSource.getRepository(User).findOne({
+      where: {
+        id: userId,
+      },
+    });
+    const itemType = await AppDataSource.getRepository(ItemType).findOneBy({
+      id: itemTypeID,
+    });
+    console.log(user);
+
+    if (!user && !id) {
+      res.status(400).json({
+        error: true,
+        message: `User with id ${userId} does not exist`,
+      });
+      return;
+    }
+
+    if (!storageLocation && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Please specify a storage location`,
+      });
+      return;
+    }
+
+    if (!paymentMethod && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Please specify a payment method`,
+      });
+      return;
+    }
+
+    if (!itemType && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Item Type ${itemTypeID} does not exist`,
+      });
+      return;
+    }
+
+    if (ownerName == null && !id) {
+      res.status(400).json({
+        error: true,
+        message: `An owner name must be supplied`,
+        body: req.body,
+      });
+      return;
+    }
+
+    Object.assign(item, {
+      id,
+      user,
+      ownerName,
+      ownerPhoneNumber,
+      comments,
+      itemType,
+      storageLocation,
+      paymentMethod,
+      createdAt: new Date().toISOString(),
+    });
+
+    try {
+      await AppDataSource.getRepository(Item).save(item);
+      res.status(201).json({
+        message: id ? "Item updated successfully" : "Item added successfully",
+      });
+    } catch (e) {
+      res.status(500).json({ error: e, message: "Failed to add item" });
+    }
+  }
+);
+
+export default router;
