@@ -204,6 +204,14 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+Enhancements should be configurable using environment variables set in .env, and should require manual intervention to enable
+
+```shell
+# Amazing Feature
+AMAZING_FEATURE_ENABLE=true
+AMAZING_FEATURE_VALUE=500
+```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LICENSE -->
