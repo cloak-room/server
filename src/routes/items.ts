@@ -5,7 +5,7 @@ import { ItemType } from "../entity/itemType.entity";
 import { User } from "../entity/user.entity";
 import { textSearchByFields } from "typeorm-text-search";
 import fs from "fs";
-
+import { In } from "typeorm";
 import { photoStorageDir, photoRequired } from "../parsedEnv";
 
 const cors = require("cors");
@@ -131,7 +131,8 @@ router.post(
       ownerPhoneNumber,
       comments,
       photo,
-      itemType: itemTypeID,
+      //itemType: itemTypeID,
+      cart,
       storageLocation,
       paymentMethod,
     } = req.body;
@@ -143,9 +144,7 @@ router.post(
         id: userId,
       },
     });
-    const itemType = await AppDataSource.getRepository(ItemType).findOneBy({
-      id: itemTypeID,
-    });
+
     console.log(user);
 
     if (!user && !id) {
@@ -172,14 +171,6 @@ router.post(
       return;
     }
 
-    if (!itemType && !id) {
-      res.status(400).json({
-        error: true,
-        message: `Item Type ${itemTypeID} does not exist`,
-      });
-      return;
-    }
-
     if (ownerName == null && !id) {
       res.status(400).json({
         error: true,
@@ -189,7 +180,7 @@ router.post(
       return;
     }
 
-    let photoFilename = null;
+    let photoFilename: string | null = null;
 
     if (!photo && !id) {
       res.status(400).json({
@@ -215,27 +206,53 @@ router.post(
       }
     }
 
-    Object.assign(item, {
-      id,
-      user,
-      ownerName,
-      ownerPhoneNumber,
-      comments,
-      itemType,
-      storageLocation,
-      paymentMethod,
-      imageLocation: photoFilename,
-      createdAt,
-    });
-
-    try {
-      await AppDataSource.getRepository(Item).save(item);
-      res.status(201).json({
-        message: id ? "Item updated successfully" : "Item added successfully",
+    if (cart.length < 1 && !id) {
+      res.status(400).json({
+        error: true,
+        message: `At least 1 item must be added`,
+        body: req.body,
       });
-    } catch (e) {
-      res.status(500).json({ error: e, message: "Failed to add item" });
+      return;
     }
+
+    cart.forEach(async (itemTypeID: number) => {
+      console.log(itemTypeID);
+      const itemType = await AppDataSource.getRepository(ItemType).findOne({
+        where: {
+          id: itemTypeID,
+        },
+      });
+
+      if ((!itemType || itemType == null) && !id) {
+        res.status(400).json({
+          error: true,
+          message: `Item Type ${itemTypeID} does not exist`,
+        });
+        return;
+      }
+
+      Object.assign(item, {
+        id,
+        user,
+        ownerName,
+        ownerPhoneNumber,
+        comments,
+        itemType,
+        storageLocation,
+        paymentMethod,
+        imageLocation: photoFilename,
+        createdAt,
+      });
+
+      try {
+        await AppDataSource.getRepository(Item).save(item);
+      } catch (e) {
+        res.status(500).json({ error: e, message: "Failed to add item" });
+      }
+    });
+    res.status(201).json({
+      message: id ? "Item updated successfully" : "Item added successfully",
+    });
   }
 );
 
