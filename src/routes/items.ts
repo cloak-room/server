@@ -4,6 +4,10 @@ import { Item } from "../entity/item.entity";
 import { ItemType } from "../entity/itemType.entity";
 import { User } from "../entity/user.entity";
 import { textSearchByFields } from "typeorm-text-search";
+import fs from "fs";
+
+import { photoStorageDir, photoRequired } from "../parsedEnv";
+
 const cors = require("cors");
 
 const router = express.Router();
@@ -52,10 +56,10 @@ router.get(
       };
 
       const limitItems = await queryBuilder()
+        .orderBy("item.createdAt", "DESC")
         .limit(parsePerPage)
         .offset((page - 1) * parsePerPage)
         .getManyAndCount();
-
       // const stats = queryBuilder()
       //   .select("COUNT(item.id)", "count")
       //   .getRawOne();
@@ -126,10 +130,13 @@ router.post(
       ownerName,
       ownerPhoneNumber,
       comments,
+      photo,
       itemType: itemTypeID,
       storageLocation,
       paymentMethod,
     } = req.body;
+
+    const createdAt = new Date().toISOString();
 
     const user = await AppDataSource.getRepository(User).findOne({
       where: {
@@ -182,6 +189,32 @@ router.post(
       return;
     }
 
+    let photoFilename = null;
+
+    if (!photo && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Please take a photo of collected items`,
+      });
+      return;
+    } else {
+      try {
+        const fileExt = photo.split(";")[0].split("/")[1]; // TODO use regex for this
+        photoFilename = `${ownerName}_${createdAt}.${fileExt}`;
+
+        fs.mkdirSync(photoStorageDir, { recursive: true });
+        fs.writeFileSync(
+          `${photoStorageDir}/${photoFilename}`,
+          Buffer.from(photo.split(",")[1], "base64")
+        );
+      } catch (err) {
+        res.status(500).json({
+          error: true,
+          message: `Failed to write photo to disk`,
+        });
+      }
+    }
+
     Object.assign(item, {
       id,
       user,
@@ -191,7 +224,8 @@ router.post(
       itemType,
       storageLocation,
       paymentMethod,
-      createdAt: new Date().toISOString(),
+      imageLocation: photoFilename,
+      createdAt,
     });
 
     try {

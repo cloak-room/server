@@ -51,6 +51,9 @@ export class Item {
   @Column({ type: "varchar", nullable: true })
   comments?: string;
 
+  @Column({ type: "varchar", nullable: true })
+  imageLocation?: string;
+
   @Column({ type: "timestamptz", nullable: true, default: null })
   collected?: Date | null = null;
 
