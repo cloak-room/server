@@ -180,7 +180,7 @@ router.post(
       return;
     }
 
-    let photoFilename: string | null = null;
+    let photoFilename: string | undefined = undefined;
 
     if (!photo && !id) {
       res.status(400).json({
@@ -190,19 +190,22 @@ router.post(
       return;
     } else {
       try {
-        const fileExt = photo.split(";")[0].split("/")[1]; // TODO use regex for this
-        photoFilename = `${ownerName}_${createdAt}.${fileExt}`;
+        if (photo && photo != "") {
+          const fileExt = photo.split(";")[0].split("/")[1]; // TODO use regex for this
+          photoFilename = `${ownerName}_${createdAt}.${fileExt}`;
 
-        fs.mkdirSync(photoStorageDir, { recursive: true });
-        fs.writeFileSync(
-          `${photoStorageDir}/${photoFilename}`,
-          Buffer.from(photo.split(",")[1], "base64")
-        );
+          fs.mkdirSync(photoStorageDir, { recursive: true });
+          fs.writeFileSync(
+            `${photoStorageDir}/${photoFilename}`,
+            Buffer.from(photo.split(",")[1], "base64")
+          );
+        }
       } catch (err) {
         res.status(500).json({
           error: true,
           message: `Failed to write photo to disk`,
         });
+        return;
       }
     }
 
