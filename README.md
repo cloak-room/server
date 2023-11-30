@@ -157,6 +157,11 @@ You will need the following prerequisites to run the project successfully
    # API URL
    PORT=3001
    DOMAIN=localhost
+
+   # Config
+   PHOTO_REQUIRED=true
+   PHOTO_STORAGE_DIR=./photos
+   LOCATION_REQUIRED=false
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

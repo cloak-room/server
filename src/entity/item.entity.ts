@@ -42,8 +42,11 @@ export class Item {
   @JoinColumn()
   paymentMethod!: PaymentMethod;
 
-  @Column({ type: "varchar", nullable: false })
+  @Column({ type: "varchar", nullable: true })
   storageLocation!: string;
+
+  @Column({ type: "int", nullable: true })
+  bagNumber!: number;
 
   @Column({ type: "varchar", nullable: true })
   ownerPhoneNumber!: string;
