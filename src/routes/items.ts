@@ -6,7 +6,7 @@ import { User } from "../entity/user.entity";
 import { textSearchByFields } from "typeorm-text-search";
 import fs from "fs";
 import { In } from "typeorm";
-import { photoStorageDir, photoRequired } from "../parsedEnv";
+import env from "../parsedEnv";
 
 const cors = require("cors");
 
@@ -74,6 +74,7 @@ router.get(
       };
       res.json(result);
     } catch (e) {
+      console.log(e);
       res.status(500).json({ error: e, message: "Failed to get items" });
     }
   }
@@ -134,6 +135,7 @@ router.post(
       //itemType: itemTypeID,
       cart,
       storageLocation,
+      bagNumber,
       paymentMethod,
     } = req.body;
 
@@ -155,10 +157,27 @@ router.post(
       return;
     }
 
-    if (!storageLocation && !id) {
+    if (!storageLocation && !id && env.locationRequired) {
       res.status(400).json({
         error: true,
         message: `Please specify a storage location`,
+      });
+      return;
+    }
+
+    const bagNumberValid = /^[0-9]*$/.test(bagNumber);
+    if (!bagNumberValid && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Bag number must consist of numbers only`,
+      });
+      return;
+    }
+
+    if (!bagNumber && !id) {
+      res.status(400).json({
+        error: true,
+        message: `Please specify a bag number`,
       });
       return;
     }
@@ -194,9 +213,9 @@ router.post(
           const fileExt = photo.split(";")[0].split("/")[1]; // TODO use regex for this
           photoFilename = `${ownerName}_${createdAt}.${fileExt}`;
 
-          fs.mkdirSync(photoStorageDir, { recursive: true });
+          fs.mkdirSync(env.photoStorageDir, { recursive: true });
           fs.writeFileSync(
-            `${photoStorageDir}/${photoFilename}`,
+            `${env.photoStorageDir}/${photoFilename}`,
             Buffer.from(photo.split(",")[1], "base64")
           );
         }
@@ -238,6 +257,7 @@ router.post(
         id,
         user,
         ownerName,
+        bagNumber,
         ownerPhoneNumber,
         comments,
         itemType,
@@ -251,6 +271,7 @@ router.post(
         await AppDataSource.getRepository(Item).save(item);
       } catch (e) {
         res.status(500).json({ error: e, message: "Failed to add item" });
+        return;
       }
     });
     res.status(201).json({
