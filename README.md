@@ -167,9 +167,28 @@ You will need the following prerequisites to run the project successfully
 
 Build and run the server
 
-```
+```sh
 pnpm run prod
 ```
+
+Add to database tables as needed
+
+**item_type** (price in cents):
+| id | name | price |
+| --- | --- | --- |
+| 1 | Phone | 600
+| 2 | Jacket | 1000
+
+**payment_method**:
+| id | name |
+| --- | --- |
+| 1 | Card |
+| 2 | Cash |
+
+**user** (auth currently unsupported):
+| id | username | firstName | lastName | hash | level |
+| --- | --- | --- | --- | --- | --- |
+| 1 | johnSmith| john | smith | null | 2 |
 
 <!-- _For more examples, please refer to the [Documentation](https://example.com)_
 
