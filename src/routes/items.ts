@@ -137,6 +137,7 @@ router.post(
       storageLocation,
       bagNumber,
       paymentMethod,
+      dryRun,
     } = req.body;
 
     const createdAt = new Date().toISOString();
@@ -268,7 +269,9 @@ router.post(
       });
 
       try {
-        await AppDataSource.getRepository(Item).save(item);
+        if (!dryRun) {
+          await AppDataSource.getRepository(Item).save(item);
+        }
       } catch (e) {
         res.status(500).json({ error: e, message: "Failed to add item" });
         return;
