@@ -16,11 +16,10 @@ router.get(
   "/",
   async function (req: express.Request, res: express.Response): Promise<void> {
     const { from, to, q, p, showCollected, perPage, id } = req.query;
-    const pageSize = parseInt(process.env.PAGE_SIZE ?? "100");
-    const page = parseInt((p ?? "1") as string);
-    const parsePerPage = parseInt((perPage ?? `${pageSize}`) as string);
-    console.log(perPage);
-    const parseShowCollected = parseInt((showCollected ?? "0") as string);
+
+    const page = parseInt((p && "1") as string);
+    const parsePerPage = parseInt((perPage && `${env.pageSize}`) as string);
+    const parseShowCollected = parseInt((showCollected && "0") as string);
 
     try {
       const queryBuilder = () => {
