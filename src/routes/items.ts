@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { Application, RequestHandler } from "express";
 import { AppDataSource } from "../../appDataSource";
 import { Item } from "../entity/item.entity";
 import { ItemType } from "../entity/itemType.entity";
@@ -7,6 +7,7 @@ import { textSearchByFields } from "typeorm-text-search";
 import fs from "fs";
 import { In } from "typeorm";
 import env from "../parsedEnv";
+import { PaymentMethod } from "../entity/paymentMethod.entitiy";
 
 const cors = require("cors");
 
@@ -24,6 +25,7 @@ router.get(
     try {
       const queryBuilder = () => {
         const queryBuilder = AppDataSource.createQueryBuilder(Item, "item");
+
         textSearchByFields<Item>(queryBuilder, (q ?? "%") as string, [
           "item.ownerName",
           "item.ownerPhoneNumber",
@@ -51,6 +53,7 @@ router.get(
           .leftJoinAndSelect("item.paymentMethod", "paymentMethod")
           .leftJoinAndSelect("item.user", "user")
           .leftJoinAndSelect("item.refundedBy", "refundedBy");
+
         return items;
       };
 
@@ -78,6 +81,69 @@ router.get(
     }
   }
 );
+
+router.get("/stats", async function (req, res) {
+  const queryBuilder = (filter?: Function) => {
+    const queryBuilder = AppDataSource.createQueryBuilder(Item, "item");
+    queryBuilder
+      .leftJoinAndSelect("item.itemType", "itemType")
+      .leftJoinAndSelect("item.paymentMethod", "paymentMethod")
+      .leftJoinAndSelect("item.user", "user")
+      .leftJoinAndSelect("item.refundedBy", "refundedBy");
+    queryBuilder
+      .select("COUNT(item.id)", "count")
+      .addSelect("SUM(itemType.price)", "totalPrice");
+
+    if (filter) {
+      filter(queryBuilder);
+    }
+
+    return queryBuilder;
+  };
+  const refunded = await queryBuilder()
+    .where("refunded IS NOT NULL")
+    .getRawOne();
+  const notRefunded = await queryBuilder()
+    .where("refunded IS NULL")
+    .getRawOne();
+  const total = await queryBuilder().getRawOne();
+
+  const stats: {
+    totals: {};
+    byPaymentMethod: any[];
+  } = {
+    totals: {
+      refunded,
+      notRefunded,
+      total,
+    },
+    byPaymentMethod: [],
+  };
+
+  const paymentMethods = await AppDataSource.getRepository(
+    PaymentMethod
+  ).find();
+  for (let paymentMethod of paymentMethods) {
+    const r = await queryBuilder()
+      .andWhere("refunded IS NOT NULL")
+      .andWhere("paymentMethod.id = :id", { id: paymentMethod.id })
+      .getRawOne();
+    const n = await queryBuilder()
+      .andWhere("refunded IS NULL")
+      .andWhere("paymentMethod.id = :id", { id: paymentMethod.id })
+      .getRawOne();
+    const t = await queryBuilder()
+      .andWhere("paymentMethod.id = :id", { id: paymentMethod.id })
+      .getRawOne();
+    console.log(total);
+    stats.byPaymentMethod = [
+      ...stats.byPaymentMethod,
+      { paymentMethod, refunded: r, notRefunded: n, total: t },
+    ];
+  }
+
+  res.json({ stats });
+} as RequestHandler);
 
 router.post(
   "/collect",
@@ -264,7 +330,7 @@ router.post(
         storageLocation,
         paymentMethod,
         imageLocation: photoFilename,
-        createdAt,
+        createdAt: id ? undefined : createdAt,
       });
 
       try {
