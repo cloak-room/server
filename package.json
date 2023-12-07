@@ -6,7 +6,10 @@
     "tsc": "tsc",
     "dev": "nodemon ./src/app.ts",
     "swagger-autogen": "node swagger.js",
-    "prod": "tsc && node ./build/app.js"
+    "prod": "tsc && pm2 start ./build/src/app.js -n cloakRoom_server",
+    "prod-restart": "tsc && pm2 restart cloakRoom_server -n cloakRoom_server",
+    "prod-stop": "pm2 delete cloakRoom_server",
+    "prod-monitor": "pm2 monitor cloakRoom_server"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -30,6 +33,7 @@
     "morgan": "~1.9.1",
     "nodemon": "^2.0.20",
     "pg": "^8.8.0",
+    "pm2": "^5.3.0",
     "reflect-metadata": "^0.1.13",
     "swagger-autogen": "^2.22.0",
     "swagger-ui-express": "^4.6.0",

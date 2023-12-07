@@ -11,14 +11,14 @@ dotenv.config();
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("./swagger_output.json");
 
-import indexRouter from "./routes/index";
+// import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
 import itemsRouter from "./routes/items";
 import itemTypesRouter from "./routes/itemTypes";
 import paymentMethodsRouter from "./routes/paymentMethods";
 import photosRouter from "./routes/photos";
 
-import { AppDataSource } from "../appDataSource";
+import { AppDataSource } from "./appDataSource";
 
 const port = process.env.PORT ?? 3001;
 const domain = process.env.DOMAIN ?? "localhost";
@@ -45,24 +45,23 @@ app.get("/docs", swaggerUI.setup(swaggerDocument));
 AppDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
+    // app.use("/", indexRouter);
+    app.use("/users", usersRouter);
+    app.use("/items", itemsRouter);
+    app.use("/item_types", itemTypesRouter);
+    app.use("/payment_methods", paymentMethodsRouter);
+    app.use("/photos", photosRouter);
+    // catch 404 and forward to error handler
+    app.use(function (req, res, next) {
+      next(createError(404));
+    });
+
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}`);
+    });
   })
   .catch((err) => {
     console.error("Error during Data Source initialization:", err);
   });
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/items", itemsRouter);
-app.use("/item_types", itemTypesRouter);
-app.use("/payment_methods", paymentMethodsRouter);
-app.use("/photos", photosRouter);
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
 
 export default app;

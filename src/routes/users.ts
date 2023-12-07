@@ -1,8 +1,8 @@
-import express, { Application } from "express";
+import express, { Application, RequestHandler } from "express";
 import { hash, compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 
-import { AppDataSource } from "../../appDataSource";
+import { AppDataSource } from "../appDataSource";
 import { User } from "../entity/user.entity";
 import { signedCookie } from "cookie-parser";
 import { UsingJoinTableIsNotAllowedError } from "typeorm";
@@ -21,46 +21,37 @@ async function checkUsernameExists(username: string): Promise<boolean> {
 }
 
 /* GET users listing. */
-router.get(
-  "/",
-  async function (req: express.Request, res: express.Response): Promise<void> {
-    const users = await AppDataSource.getRepository(User).find({
-      select: ["id", "username", "level"],
-    });
-    res.json(users);
-  }
-);
+router.get("/", async function (req, res) {
+  const users = await AppDataSource.getRepository(User).find({
+    select: ["id", "username", "level"],
+  });
+  res.json(users);
+} as RequestHandler);
 
-router.post(
-  "/login",
-  async function (req: express.Request, res: express.Response): Promise<void> {
-    const user = await AppDataSource.getRepository(User).findOne({
-      where: {
-        username: req.body.username,
-      },
-    });
-    const match = await compare(req.body.password, user?.hash ?? "");
+router.post("/login", async function (req, res) {
+  const user = await AppDataSource.getRepository(User).findOne({
+    where: {
+      username: req.body.username,
+    },
+  });
+  const match = await compare(req.body.password, user?.hash ?? "");
 
-    if (secret == null) {
-      res
-        .status(500)
-        .json({ error: true, message: "SECRET has not been set in .env" });
-    } else if (process.env.LAZY_AUTH || match) {
-      const token = await sign({ user: user }, secret, { expiresIn: "1d" });
-      res.json({ token: token });
-
-      return;
-    }
+  if (secret == null) {
     res
-      .status(400)
-      .json({ error: true, message: "Username and Password do not match" });
-  }
-);
+      .status(500)
+      .json({ error: true, message: "SECRET has not been set in .env" });
+  } else if (process.env.LAZY_AUTH || match) {
+    const token = await sign({ user: user }, secret, { expiresIn: "1d" });
+    res.json({ token: token });
 
-async function addUser(
-  req: express.Request,
-  res: express.Response
-): Promise<void> {
+    return;
+  }
+  res
+    .status(400)
+    .json({ error: true, message: "Username and Password do not match" });
+} as RequestHandler);
+
+const addUser = async function (req, res) {
   if (await checkUsernameExists(req.body.username)) {
     res.status(400).json({
       error: true,
@@ -83,35 +74,29 @@ async function addUser(
   } catch (e) {
     res.status(500).json({ error: e, message: "Failed to add user" });
   }
-}
+} as RequestHandler;
 
-router.post(
-  "/register",
-  async function (req: express.Request, res: express.Response): Promise<void> {
-    if (req.body.password && process.env.LAZY_AUTH) {
-      await addUser(req, res);
-    } else {
-      res.json({
-        error: true,
-        message: "A password must be specified",
-      });
-    }
+router.post("/register", async function (req, res, next) {
+  if (req.body.password && process.env.LAZY_AUTH) {
+    await addUser(req, res, next);
+  } else {
+    res.json({
+      error: true,
+      message: "A password must be specified",
+    });
   }
-);
+} as RequestHandler);
 
-router.post(
-  "/add",
-  async function (req: express.Request, res: express.Response): Promise<void> {
-    if (process.env.LAZY_AUTH) {
-      await addUser(req, res);
-    } else {
-      res.json({
-        error: true,
-        message:
-          "The /user/register endpoint must be used when auth is not set to lazy",
-      });
-    }
+router.post("/add", async function (req, res, next) {
+  if (process.env.LAZY_AUTH) {
+    await addUser(req, res, next);
+  } else {
+    res.json({
+      error: true,
+      message:
+        "The /user/register endpoint must be used when auth is not set to lazy",
+    });
   }
-);
+}) as RequestHandler;
 
 export default router;
