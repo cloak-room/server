@@ -19,6 +19,7 @@ import paymentMethodsRouter from "./routes/paymentMethods";
 import photosRouter from "./routes/photos";
 
 import { AppDataSource } from "./appDataSource";
+import env from "./parsedEnv";
 
 const port = process.env.PORT ?? 3001;
 const domain = process.env.DOMAIN ?? "localhost";
@@ -41,6 +42,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/docs", swaggerUI.serve);
 app.get("/docs", swaggerUI.setup(swaggerDocument));
+
+const defaultConsole = { ...console };
+console.log = (...args) => {
+  if (env.nodeEnv == "development") {
+    defaultConsole.log(...args);
+  }
+};
 
 AppDataSource.initialize()
   .then(() => {

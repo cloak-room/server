@@ -6,8 +6,8 @@
     "tsc": "tsc",
     "dev": "nodemon ./src/app.ts",
     "swagger-autogen": "node swagger.js",
-    "prod": "tsc && pm2 start ./build/src/app.js -n cloakRoom_server",
-    "prod-restart": "tsc && pm2 restart cloakRoom_server -n cloakRoom_server",
+    "prod": "tsc && NODE_ENV=production pm2 start ./build/src/app.js -n cloakRoom_server",
+    "prod-restart": "tsc && NODE_ENV=production pm2 restart cloakRoom_server -n cloakRoom_server",
     "prod-stop": "pm2 delete cloakRoom_server",
     "prod-monitor": "pm2 monitor cloakRoom_server"
   },

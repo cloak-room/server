@@ -12,5 +12,13 @@ function parseBool(x: string | undefined): boolean | undefined {
   return undefined;
 }
 
-const env = { photoStorageDir, photoRequired, locationRequired, pageSize };
+export const nodeEnv = process.env.NODE_ENV || "development";
+
+const env = {
+  photoStorageDir,
+  photoRequired,
+  locationRequired,
+  pageSize,
+  nodeEnv,
+};
 export default env;
