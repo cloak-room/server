@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/", async function (req, res) {
   const { from, to, q, p, showCollected, showStored, perPage, id } = req.query;
 
-  const page = parseInt((p && "1") as string);
+  const page = parseInt((p || "1") as string);
   const parsePerPage = parseInt((perPage && `${env.pageSize}`) as string);
   const parseShowCollected = parseInt((showCollected ?? "0") as string);
   const parseShowStored = parseInt((showStored ?? "0") as string);
