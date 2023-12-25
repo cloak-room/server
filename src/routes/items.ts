@@ -293,8 +293,8 @@ router.post("/add", async function (req, res) {
   }
 
   let photoFilename: string | undefined = undefined;
-
-  if (!photo && !id) {
+  console.log(env.photoRequired);
+  if (!photo && !id && env.photoRequired) {
     res.status(400).json({
       error: true,
       message: `Please take a photo of collected items`,
