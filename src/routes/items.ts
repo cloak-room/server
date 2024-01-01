@@ -30,6 +30,7 @@ router.get("/", async function (req, res) {
         "item.ownerPhoneNumber",
         "item.comments",
         "item.storageLocation",
+        "CAST(item.bagNumber as VARCHAR(30))"
       ]);
 
       if (from) {
@@ -330,7 +331,7 @@ router.post("/add", async function (req, res) {
     return;
   }
 
-  cart.forEach(async (itemTypeID: number) => {
+    for (let itemTypeID of cart) {
     console.log(itemTypeID);
     const itemType = await AppDataSource.getRepository(ItemType).findOne({
       where: {
@@ -368,7 +369,7 @@ router.post("/add", async function (req, res) {
       res.status(500).json({ error: e, message: "Failed to add item" });
       return;
     }
-  });
+  }
   res.status(201).json({
     message: id ? "Item updated successfully" : "Item added successfully",
   });
